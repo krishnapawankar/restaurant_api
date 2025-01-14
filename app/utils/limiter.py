@@ -1,4 +1,7 @@
-# app/utils/limiter.py
+"""
+Configures Flask-Limiter for request rate limiting.
+"""
+
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 

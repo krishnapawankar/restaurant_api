@@ -1,4 +1,7 @@
-# app/__init__.py
+"""
+This module initializes the Flask application, sets up extensions,
+and defines the `create_app()` factory function.
+"""
 
 import logging
 
@@ -20,6 +23,14 @@ migrate = Migrate()
 
 
 def create_app() -> Flask:
+    """
+    Create and configure the Flask application.
+
+    Returns:
+        Flask: A configured Flask application instance with
+        extensions (SQLAlchemy, JWT, Migrate, etc.) and
+        namespaces (from Flask-RESTX) registered.
+    """
     # Load environment variables from .env
     load_dotenv()
 

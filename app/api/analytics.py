@@ -1,4 +1,10 @@
-# app/api/analytics.py
+"""
+Provides analytics-related endpoints for the Restaurant Review API.
+
+Includes average ratings for each restaurant and
+top-3 restaurants by cuisine type.
+"""
+
 from flask_restx import Namespace, Resource
 from sqlalchemy import desc, func
 
@@ -12,10 +18,21 @@ analytics_ns = Namespace('analytics', description="Analytics Endpoints")
 
 @analytics_ns.route('/average-ratings')
 class AverageRatings(Resource):
+    """
+    Resource for calculating and returning the average rating per restaurant.
+    """
     @cache.cached(timeout=120)  # Cache for 120 seconds
     def get(self):
         """
-        Returns the average rating per restaurant:
+        Retrieves the average rating for each restaurant.
+
+        This endpoint may be cached for 120 seconds to improve performance.
+
+        Returns:
+            tuple: A list of dictionaries containing 'restaurant_id' and
+            'average_rating' for each restaurant, alongside an HTTP 200 status code.
+
+        Ex:
         [
           {
             "restaurant_id": 1,
@@ -44,10 +61,27 @@ class AverageRatings(Resource):
 
 @analytics_ns.route('/top-3/<string:cuisine_type>')
 class Top3Restaurants(Resource):
+    """
+    Resource for retrieving the top 3 restaurants by cuisine,
+    based on average rating.
+    """
     @cache.cached(timeout=120)
     def get(self, cuisine_type):
         """
-        Returns top 3 restaurants by cuisine type,
+        Retrieves the top 3 restaurants for a given cuisine type,
+        sorted by average rating in descending order.
+
+        Args:
+            cuisine_type (str): The cuisine type to filter by (e.g., 'Italian').
+
+        Returns:
+            tuple: A list of up to 3 dictionaries, each containing:
+                - 'restaurant_id': The restaurant's primary key
+                - 'name': The restaurant's name
+                - 'cuisine_type': The cuisine type
+                - 'average_rating': The average rating (float)
+            plus an HTTP 200 status code.
+        Ex: Returns top 3 restaurants by cuisine type,
         sorted by average rating (desc).
         [
           {

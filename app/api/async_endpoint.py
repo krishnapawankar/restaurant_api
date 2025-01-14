@@ -1,4 +1,7 @@
-# app/api/async_endpoint.py
+"""
+ An asynchronous endpoint demo.
+"""
+
 import asyncio
 
 from flask_restx import Namespace, Resource

@@ -1,16 +1,32 @@
-# app/models/restaurant.py
-import enum
+"""
+Defines the Restaurant model, representing restaurant data
+in the database.
+"""
 
+import enum
 from app import db
 
 
 class PriceRange(enum.Enum):
+    """
+    Enumerates the possible price ranges for a restaurant.
+    """
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
 
 
 class Restaurant(db.Model):
+    """
+    Represents a restaurant in the system.
+
+    Attributes:
+        id (int): Primary key.
+        name (str): The restaurant's name.
+        cuisine_type (str): Type of cuisine (Italian, Indian, etc.).
+        address (str): Physical address.
+        price_range (PriceRange): Enum indicating price range.
+    """
     __tablename__ = "restaurant"
 
     id = db.Column(db.Integer, primary_key=True)

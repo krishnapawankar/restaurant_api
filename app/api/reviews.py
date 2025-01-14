@@ -1,4 +1,8 @@
-# app/api/reviews.py
+"""
+Manages review-related endpoints (CRUD for reviews).
+Users can submit reviews; admin can approve them.
+"""
+
 from datetime import datetime
 
 from flask import request
@@ -31,10 +35,19 @@ review_patch_model = review_ns.model('ReviewPatch', {
 
 @review_ns.route('')
 class ReviewList(Resource):
+    """
+    Resource for creating and listing reviews.
+    """
     @jwt_required()
     @review_ns.expect(review_model)
     def post(self):
-        """Submit a new review (status=PENDING by default)."""
+        """
+        Submits a new review for a given restaurant.
+        Review status defaults to PENDING.
+
+        Returns:
+            The newly created review in JSON with status code 201.
+        """
         schema = ReviewSchema()
         try:
             data = schema.load(request.json)
@@ -59,7 +72,12 @@ class ReviewList(Resource):
         return schema.dump(review), 201
 
     def get(self):
-        """Retrieve all reviews (paginated)."""
+        """
+        Retrieves all reviews in a paginated manner.
+
+        Returns:
+            A JSON list of reviews plus pagination info.
+        """
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 5))
         paginated = Review.query.paginate(
@@ -79,9 +97,20 @@ class ReviewList(Resource):
 
 @review_ns.route('/<int:review_id>')
 class ReviewDetail(Resource):
+    """
+    Resource for retrieving or updating a single review by ID.
+    """
     @jwt_required()
     def get(self, review_id):
-        """Retrieve a single review by ID."""
+        """
+        Retrieves a single review by its ID.
+
+        Args:
+            review_id (int): The ID of the review to retrieve.
+
+        Returns:
+            The review data in JSON if found, or a 404 error if not found.
+        """
         review = Review.query.get(review_id)
         if not review:
             raise NotFoundError("Review not found.")
@@ -92,7 +121,16 @@ class ReviewDetail(Resource):
     @jwt_required()
     @review_ns.expect(review_patch_model, validate=True)
     def patch(self, review_id):
-        """Update a review's status (admin only)."""
+        """
+        Updates the status of a review (admin only).
+
+        Args:
+            review_id (int): The ID of the review to update.
+
+        Returns:
+            JSON message indicating success or an error status if user
+            is not admin or the status is invalid.
+        """
         # current_user = get_jwt_identity()
         claims = get_jwt()  # returns the entire claims dict
         user_role = claims["role"]  # "admin" or "user"

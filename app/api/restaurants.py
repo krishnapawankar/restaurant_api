@@ -1,4 +1,8 @@
-# app/api/restaurants.py
+"""
+Manages restaurant-related endpoints (CRUD).
+Requires admin privileges for creation.
+"""
+
 from flask import request
 from flask_jwt_extended import get_jwt, jwt_required
 from flask_restx import Namespace, Resource, fields
@@ -38,6 +42,9 @@ restaurant_model = restaurant_ns.model('Restaurant', {
 
 @restaurant_ns.route('')
 class RestaurantList(Resource):
+    """
+    Resource for listing and creating restaurants.
+    """
     method_decorators = [limiter.limit("5/minute")]
 
     @restaurant_ns.doc(
@@ -45,7 +52,13 @@ class RestaurantList(Resource):
                 'per_page': 'Items per page'}
     )
     def get(self):
-        """Get a paginated list of restaurants."""
+        """
+        Retrieves a list of restaurants.
+        Supports pagination via query params: ?page=1&per_page=5
+
+        Returns:
+            JSON list of restaurants plus pagination info.
+        """
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 5))
 
@@ -66,8 +79,12 @@ class RestaurantList(Resource):
     @jwt_required()
     @restaurant_ns.expect(restaurant_model)
     def post(self):
-        """Create a new restaurant (admin only)."""
-        # current_user = get_jwt_identity()
+        """
+        Creates a new restaurant. Only admin users can perform this action.
+
+        Returns:
+            The created restaurant in JSON with status code 201.
+        """
         claims = get_jwt()  # returns the entire claims dict
         user_role = claims["role"]  # "admin" or "user"
         if user_role != "admin":
@@ -94,9 +111,20 @@ class RestaurantList(Resource):
 
 @restaurant_ns.route('/<int:restaurant_id>')
 class RestaurantDetail(Resource):
+    """
+    Resource for retrieving a single restaurant by ID.
+    """
     @jwt_required(optional=True)
     def get(self, restaurant_id):
-        """Retrieve a single restaurant by ID."""
+        """
+        Retrieves a specific restaurant by ID.
+
+        Args:
+            restaurant_id (int): The ID of the restaurant to retrieve.
+
+        Returns:
+            The restaurant data in JSON if found, or a 404 error if not found.
+        """
         restaurant = Restaurant.query.get(restaurant_id)
         if not restaurant:
             raise NotFoundError("Restaurant not found.")

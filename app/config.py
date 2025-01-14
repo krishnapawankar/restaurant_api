@@ -1,8 +1,16 @@
-# app/config.py
+"""
+Holds configuration classes for the Restaurant Review API.
+Manages environment variables and default settings.
+"""
+
 import os
 
 
 class Config:
+    """
+    Default Flask configuration class for the application.
+    Override environment variables as needed.
+    """
     SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")
     SQLALCHEMY_DATABASE_URI = os.getenv(
                                             "DATABASE_URL",
