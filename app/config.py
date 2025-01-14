@@ -22,7 +22,7 @@ class Config:
     PROPAGATE_EXCEPTIONS = True
 
     # Rate limit default, e.g., 10 requests per minute
-    RATELIMIT_DEFAULT = os.getenv("RATELIMIT_DEFAULT", "5 per minute")
+    RATELIMIT_DEFAULT = os.getenv("RATELIMIT_DEFAULT", "10 per minute")
 
     # Flask-Caching
     CACHE_TYPE = os.getenv("CACHE_TYPE", "SimpleCache")

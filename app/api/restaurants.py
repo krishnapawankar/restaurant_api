@@ -45,7 +45,7 @@ class RestaurantList(Resource):
     """
     Resource for listing and creating restaurants.
     """
-    method_decorators = [limiter.limit("5/minute")]
+    method_decorators = [limiter.limit("10/minute")]
 
     @restaurant_ns.doc(
         params={'page': 'Page number',
