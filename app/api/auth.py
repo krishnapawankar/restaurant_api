@@ -1,0 +1,101 @@
+"""
+Handles user authentication (registration, login) and JWT handling.
+"""
+
+from flask import request
+from flask_jwt_extended import (create_access_token, get_jwt_identity,
+                                jwt_required)
+from flask_restx import Namespace, Resource, fields
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from app import db
+from app.models.user import User
+
+auth_ns = Namespace('auth', description="User Authentication")
+
+login_model = auth_ns.model('Login', {
+    'username': fields.String(required=True),
+    'password': fields.String(required=True),
+})
+
+signup_model = auth_ns.model('SignUp', {
+    'username': fields.String(required=True),
+    'password': fields.String(required=True),
+})
+
+
+@auth_ns.route('/register')
+class RegisterResource(Resource):
+    """
+    Resource for registering a new user with a default role of 'user'.
+    """
+    @auth_ns.expect(signup_model)
+    def post(self):
+        """
+        Register a new user.
+
+        Returns:
+            A JSON message indicating success or failure.
+        """
+        data = request.json
+        if User.query.filter_by(username=data['username']).first():
+            return {"message": "Username already taken."}, 400
+        hashed_password = generate_password_hash(data['password'])
+        user = User(
+                        username=data['username'],
+                        password=hashed_password,
+                        role="user"
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        return {"message": "User created successfully."}, 201
+
+
+@auth_ns.route('/login')
+class LoginResource(Resource):
+    """
+    Resource for user login to obtain a JWT access token.
+    """
+    @auth_ns.expect(login_model)
+    def post(self):
+        """
+        Authenticates a user by username and password.
+
+        Returns:
+            A JSON object containing a JWT access token if successful,
+            otherwise an error message with status 401.
+        """
+        data = request.json
+        user = User.query.filter_by(username=data['username']).first()
+        if not user:
+            return {"message": "Invalid credentials."}, 401
+
+        if check_password_hash(user.password, data['password']):
+            # access_token = create_access_token(
+            # identity={"username": user.username,
+            # "role": user.role})
+            access_token = create_access_token(
+                identity=user.username,
+                additional_claims={"role": user.role}
+            )
+            return {"access_token": access_token}, 200
+
+        return {"message": "Invalid credentials."}, 401
+
+
+@auth_ns.route('/protected')
+class ProtectedResource(Resource):
+    """
+    Example protected route to verify JWT authentication.
+    """
+    @jwt_required()
+    def get(self):
+        """
+        Returns the current user's identity if token is valid.
+
+        Returns:
+            JSON with the user's username and role, if applicable.
+        """
+        current_user = get_jwt_identity()  # {'username':..., 'role':...}
+        return {"logged_in_as": current_user}, 200
