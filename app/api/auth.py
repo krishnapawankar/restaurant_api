@@ -1,11 +1,12 @@
 # app/api/auth.py
-from flask_restx import Namespace, Resource, fields
 from flask import request
-from app.models.user import User
+from flask_jwt_extended import (create_access_token, get_jwt_identity,
+                                jwt_required)
+from flask_restx import Namespace, Resource, fields
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from app import db
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required
-from flask_jwt_extended import get_jwt_identity
+from app.models.user import User
 
 auth_ns = Namespace('auth', description="User Authentication")
 

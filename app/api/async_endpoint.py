@@ -1,5 +1,6 @@
 # app/api/async_endpoint.py
 import asyncio
+
 from flask_restx import Namespace, Resource
 
 async_ns = Namespace('async-demo', description="Demo Async Endpoint")

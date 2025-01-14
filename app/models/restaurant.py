@@ -1,6 +1,7 @@
 # app/models/restaurant.py
-from app import db
 import enum
+
+from app import db
 
 
 class PriceRange(enum.Enum):

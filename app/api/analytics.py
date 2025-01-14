@@ -1,9 +1,10 @@
 # app/api/analytics.py
 from flask_restx import Namespace, Resource
+from sqlalchemy import desc, func
+
+from app import db
 from app.models.restaurant import Restaurant
 from app.models.review import Review
-from sqlalchemy import func, desc
-from app import db
 from app.utils.cache import cache
 
 analytics_ns = Namespace('analytics', description="Analytics Endpoints")

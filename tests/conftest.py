@@ -1,8 +1,9 @@
 # tests/conftest.py
 import pytest
+from werkzeug.security import generate_password_hash
+
 from app import create_app, db
 from app.models.user import User
-from werkzeug.security import generate_password_hash
 
 
 @pytest.fixture

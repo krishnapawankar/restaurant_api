@@ -1,11 +1,12 @@
 # app/api/restaurants.py
-from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import get_jwt, jwt_required
+from flask_restx import Namespace, Resource, fields
 from marshmallow import ValidationError
-from app.models.restaurant import Restaurant, PriceRange
-from app.schemas.restaurant import RestaurantSchema
+
 from app import db
+from app.models.restaurant import PriceRange, Restaurant
+from app.schemas.restaurant import RestaurantSchema
 from app.utils.exceptions import NotFoundError
 from app.utils.limiter import limiter
 

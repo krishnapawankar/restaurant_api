@@ -1,7 +1,8 @@
 # app/models/review.py
-from app import db
 import enum
 from datetime import date
+
+from app import db
 
 
 class ReviewStatus(enum.Enum):
