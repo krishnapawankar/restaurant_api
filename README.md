@@ -24,6 +24,26 @@ request rate limiting, provides basic analytics and optional async endpoint.
 - **Flask-Limiter** (for rate limiting)
 - **Pytest** (for testing)
 
+## Project structure
+- restaurant_api
+   ```bash
+   restaurant_api/
+   ├── app/
+   │   ├── __init__.py (creates and configures Flask instance)
+   │   ├── config.py (all config classes)
+   │   ├── models/ (SQLAlchemy models)
+   │   ├── schemas/ (Marshmallow schemas)
+   │   ├── api/ (RESTX namespaces/endpoints)
+   │   ├── services/ (business logic, optional)
+   │   └── utils/ (helper functions, limiters, custom exceptions)
+   ├── tests/
+   │   ├── conftest.py (fixtures, e.g., create_app)
+   │   ├── test_*.py (test files)
+   ├── requirements.txt
+   ├── README.md
+   └── .env
+
+
 ## Quick Start
 
 1. **Clone the Repository**:
