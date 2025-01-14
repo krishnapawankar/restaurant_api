@@ -4,7 +4,8 @@ from flask import request
 from app.models.user import User
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import get_jwt_identity
 
 auth_ns = Namespace('auth', description="User Authentication")
 
@@ -18,6 +19,7 @@ signup_model = auth_ns.model('SignUp', {
     'password': fields.String(required=True),
 })
 
+
 @auth_ns.route('/register')
 class RegisterResource(Resource):
     @auth_ns.expect(signup_model)
@@ -27,7 +29,11 @@ class RegisterResource(Resource):
         if User.query.filter_by(username=data['username']).first():
             return {"message": "Username already taken."}, 400
         hashed_password = generate_password_hash(data['password'])
-        user = User(username=data['username'], password=hashed_password, role="user")
+        user = User(
+                        username=data['username'],
+                        password=hashed_password,
+                        role="user"
+        )
         db.session.add(user)
         db.session.commit()
 
@@ -45,8 +51,13 @@ class LoginResource(Resource):
             return {"message": "Invalid credentials."}, 401
 
         if check_password_hash(user.password, data['password']):
-            #access_token = create_access_token(identity={"username": user.username, "role": user.role})
-            access_token = create_access_token(identity=user.username, additional_claims={"role": user.role})
+            # access_token = create_access_token(
+            # identity={"username": user.username,
+            # "role": user.role})
+            access_token = create_access_token(
+                identity=user.username,
+                additional_claims={"role": user.role}
+            )
             return {"access_token": access_token}, 200
 
         return {"message": "Invalid credentials."}, 401

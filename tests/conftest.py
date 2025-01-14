@@ -4,6 +4,7 @@ from app import create_app, db
 from app.models.user import User
 from werkzeug.security import generate_password_hash
 
+
 @pytest.fixture
 def app():
     test_app = create_app()
@@ -14,16 +15,25 @@ def app():
     with test_app.app_context():
         db.create_all()
         # Create an admin user
-        admin = User(username="admin", password=generate_password_hash("adminpass"), role="admin")
+        admin = User(
+                        username="admin",
+                        password=generate_password_hash("adminpass"),
+                        role="admin"
+        )
         db.session.add(admin)
         # Create a normal user
-        user = User(username="user", password=generate_password_hash("user"), role="user")
+        user = User(
+                        username="user",
+                        password=generate_password_hash("user"),
+                        role="user"
+        )
         db.session.add(user)
         db.session.commit()
 
         yield test_app
 
         db.drop_all()
+
 
 @pytest.fixture
 def client(app):

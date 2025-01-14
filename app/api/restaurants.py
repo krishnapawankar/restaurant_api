@@ -1,7 +1,7 @@
 # app/api/restaurants.py
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt
 from marshmallow import ValidationError
 from app.models.restaurant import Restaurant, PriceRange
 from app.schemas.restaurant import RestaurantSchema
@@ -13,14 +13,14 @@ restaurant_ns = Namespace(
     'restaurants',
     description="Restaurant Management",
     # specify that this entire namespace requires JWT
-    authorizations = {
+    authorizations={
         'Bearer': {
-        'type': 'apiKey',
-        'in': 'header',
-        'name': 'Authorization'
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
         }
     },
-    security = 'Bearer'
+    security='Bearer'
 )
 
 restaurant_model = restaurant_ns.model('Restaurant', {
@@ -28,20 +28,31 @@ restaurant_model = restaurant_ns.model('Restaurant', {
     'name': fields.String(required=True),
     'cuisine_type': fields.String(required=True),
     'address': fields.String(required=True),
-    'price_range': fields.String(required=True, enum=["LOW", "MEDIUM", "HIGH"]),
+    'price_range': fields.String(
+        required=True,
+        enum=["LOW", "MEDIUM", "HIGH"]
+    ),
 })
+
 
 @restaurant_ns.route('')
 class RestaurantList(Resource):
     method_decorators = [limiter.limit("5/minute")]
 
-    @restaurant_ns.doc(params={'page': 'Page number', 'per_page': 'Items per page'})
+    @restaurant_ns.doc(
+        params={'page': 'Page number',
+                'per_page': 'Items per page'}
+    )
     def get(self):
         """Get a paginated list of restaurants."""
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 5))
 
-        paginated = Restaurant.query.paginate(page=page, per_page=per_page, error_out=False)
+        paginated = Restaurant.query.paginate(
+                                                page=page,
+                                                per_page=per_page,
+                                                error_out=False
+        )
         schema = RestaurantSchema(many=True)
 
         return {

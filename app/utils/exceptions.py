@@ -2,9 +2,11 @@
 from flask import jsonify
 from werkzeug.exceptions import HTTPException
 
+
 class NotFoundError(Exception):
     """Resource not found exception."""
     pass
+
 
 def register_error_handlers(app):
     @app.errorhandler(NotFoundError)

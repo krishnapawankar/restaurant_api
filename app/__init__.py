@@ -7,7 +7,6 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
-import os
 import logging
 
 from .config import Config
@@ -18,6 +17,7 @@ db = SQLAlchemy()
 jwt = JWTManager()
 migrate = Migrate()
 
+
 def create_app() -> Flask:
     # Load environment variables from .env
     load_dotenv()
@@ -27,7 +27,8 @@ def create_app() -> Flask:
 
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s'
+        format='%(asctime)s %(levelname)s %(name)s '
+               '%(threadName)s : %(message)s'
     )
 
     db.init_app(app)
@@ -51,7 +52,8 @@ def create_app() -> Flask:
         app,
         version="1.0",
         title="Restaurant Review API",
-        description="API for managing restaurants and reviews with caching & optional async endpoints",
+        description="API for managing restaurants and reviews with "
+                    "caching & optional async endpoints",
         prefix="/api",
         doc="/api/",  # Swagger UI endpoint
         authorizations=authorizations,

@@ -1,7 +1,7 @@
 # app/api/reviews.py
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt
 from marshmallow import ValidationError
 from datetime import datetime
 from app import db
@@ -25,6 +25,7 @@ review_model = review_ns.model('Review', {
 review_patch_model = review_ns.model('ReviewPatch', {
     'status': fields.String(required=True, enum=["PENDING", "APPROVED"])
 })
+
 
 @review_ns.route('')
 class ReviewList(Resource):
@@ -59,7 +60,11 @@ class ReviewList(Resource):
         """Retrieve all reviews (paginated)."""
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 5))
-        paginated = Review.query.paginate(page=page, per_page=per_page, error_out=False)
+        paginated = Review.query.paginate(
+                                            page=page,
+                                            per_page=per_page,
+                                            error_out=False
+        )
 
         schema = ReviewSchema(many=True)
         return {

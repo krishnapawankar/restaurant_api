@@ -2,10 +2,12 @@
 from app import db
 import enum
 
+
 class PriceRange(enum.Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
+
 
 class Restaurant(db.Model):
     __tablename__ = "restaurant"

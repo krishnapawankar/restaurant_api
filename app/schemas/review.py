@@ -1,6 +1,7 @@
 # app/schemas/review.py
 from marshmallow import Schema, fields
 
+
 class ReviewSchema(Schema):
     id = fields.Int(dump_only=True)
     restaurant_id = fields.Int(required=True)
